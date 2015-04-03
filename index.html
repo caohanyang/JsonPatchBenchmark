@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head >
+  <meta charset="UTF-8">
+  <title>Benchmark</title>
+
+  <!-- FOR ANGULAR ROUTING -->
+  <base href="/" />
+
+
+  <!-- JS -->
+  <!-- load angular and angular-route -->
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
+  <script type="text/javascript" src="bower_components/angular-resource/angular-resource.js"></script>
+
+  <script type="text/javascript" src="bower_components/jsondiffpatch/public/build/jsondiffpatch.js"></script>
+  <script type="text/javascript" src="bower_components/jsondiffpatch/public/build/jsondiffpatch-full.js"></script>
+  <script type="text/javascript" src="bower_components/jsondiffpatch/public/build/jsondiffpatch-formatters.js"></script>
+ 
+
+  <!-- controllers -->
+  <script type="text/javascript" src="userCtrl.js"></script>
+
+  <!-- services -->
+  <script type="text/javascript" src="userService.js"></script>
+
+  <!-- main Angular app files -->
+  <script type="text/javascript" src="app.routes.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+</head>
+
+<body ng-app="userApp" >
+
+  <div ng-view></div>
+
+</body>
+
+</html>

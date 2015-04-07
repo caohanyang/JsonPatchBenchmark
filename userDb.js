@@ -6,23 +6,31 @@ var jsondiffpatch = require('jsondiffpatch'),
 exports.findUser = function(req, res){
 	// generate JSON data randomly
 	users[1] = Mock.mock({
-		'list|100-100':[{
-			'id|+1':1,
-			'name':{
-				'first':'@FIRST',
-				'last':'@LAST'
-			}
-		}]
+		'father|1000-1000': [{
+	        'id|+1': 1,
+            "married|1" : true,
+		    "name" : "@FIRST @LAST",
+		    "sons" : null,
+		    "daughters|0-3" : [ 
+		      { 
+		        "age|0-31" : 0,
+		        "name" : "@FIRST"
+		        }
+		     ]
+ 
+	    }],
+
+	    'string|1-10': '*'
 	});
 	users[0] = JSON.parse(JSON.stringify(users[1]));
 
-	fuzzer.seed(3);
+	fuzzer.seed(2);
 
 	// mutate JSON Object
 	var generator = fuzzer.mutate.object(users[1]);
-	for (i=0;i<10;i++){
-		generator();
-	}
+    
+	generator();
+	
 	res.send(users);
 }
 

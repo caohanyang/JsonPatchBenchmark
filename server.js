@@ -10,11 +10,19 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.use(express.static(__dirname ));
 
+
 router.route('/')
 	.get(userDb.findUser)
 	.put(userDb.updateUser);
 
 app.use('/benchmark', router);
+
+// MAIN CATCHALL ROUTE --------------- 
+// SEND USERS TO FRONTEND ------------
+// has to be registered after API ROUTES
+app.get('*', function(req, res) {
+	res.sendFile(path.join(__dirname + '/index.html'));
+});
 
 app.listen(8080);
 console.log('listen on 8080');

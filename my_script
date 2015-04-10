@@ -1,0 +1,52 @@
+#!/bin/bash
+# My first script
+
+killall node
+
+#shift $((OPTIND-1))
+# now do something with $@
+
+#get the parameters 
+while getopts ":t:p:l:" opt; do
+  case $opt in
+    t)
+      times=$OPTARG
+      echo "-t was triggered, Parameter: $OPTARG" >&2
+      ;;
+    p)
+      probability=$OPTARG
+      echo "-p was triggered, Parameter: $OPTARG" >&2
+      ;;
+	l)
+      loop=$OPTARG
+	  echo "-l was triggered, Parameter: $OPTARG" >&2
+	  ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+ #start the webdriver
+webdriver-manager start &
+
+#start to benchmark times: $times
+for size in small medium large
+do
+  #start the server $i:index, $probability:chance to modify the node,  $loop:traverse times
+	#nodemon server.js $size $probability $loop >"$size.txt" 2>&1 &
+  node server.js $size $probability $loop &
+    #start to test 
+	for (( t=1; t<=$times; t++ ))
+	do
+	   protractor conf.js
+	done
+
+  killall node
+
+done

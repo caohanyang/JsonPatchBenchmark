@@ -21,7 +21,9 @@ angular.module('userCtrl', [])
       "delta": delta
     };
 
-    User.update(transmit);
+    User.update(transmit, function() {
+      $scope.mark = 'ok';
+    });
   });
 
 

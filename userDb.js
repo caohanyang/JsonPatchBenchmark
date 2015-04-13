@@ -3,9 +3,9 @@ var jsondiffpatch = require('jsondiffpatch'),
 	Mock = require('mockjs'),
 	fs = require('fs'),
 	users = [];
-var grammar;
+var grammar, size, probability, loopTimes, algorithm;
 var smallGrammar = {
-    'father|10-10': [{
+    'father|1-1': [{
 	 'id|+1': 1,
          "married|1" : true,
          "name" : "@FIRST @LAST",
@@ -22,7 +22,7 @@ var smallGrammar = {
 };
 
 var mediumGrammar = {
-    'father|600-600': [{
+    'father|20-20': [{
 	 'id|+1': 1,
          "married|1" : true,
          "name" : "@FIRST @LAST",
@@ -39,7 +39,7 @@ var mediumGrammar = {
 };
 
 var largeGrammar = {
-    'father|30000-30000': [{
+    'father|10000-10000': [{
 	 'id|+1': 1,
          "married|1" : true,
          "name" : "@FIRST @LAST",
@@ -56,19 +56,39 @@ var largeGrammar = {
 };
 
 //get the parameters 
-var size = process.argv.slice(2)[0];
-var probability = process.argv.slice(3)[0];
-var loopTimes = process.argv.slice(4)[0];
-var algorithm = process.argv.slice(5)[0];
+// var size = process.argv.slice(2)[0];
+// var probability = process.argv.slice(3)[0];
+// var loopTimes = process.argv.slice(4)[0];
+// var algorithm = process.argv.slice(5)[0];
 
-switch (size) {
-	case "small": grammar = smallGrammar; break;
-	case "medium": grammar = mediumGrammar; break;
-	case "large": grammar = largeGrammar; break;
-}
+// switch (size) {
+// 	case "small": grammar = smallGrammar; break;
+// 	case "medium": grammar = mediumGrammar; break;
+// 	case "large": grammar = largeGrammar; break;
+// }
 
 
 exports.findUser = function(req, res){
+	console.log("==========================");
+	console.log(req.query);
+
+    size = req.query.size;
+    probability = req.query.probability;
+    loopTimes = req.query.loopTimes;
+    algorithm = req.query.algorithm;
+   
+    console.log(req.query.algorithm);
+    console.log(req.query.size);
+    console.log(req.query.probability);
+    console.log(req.query.loopTimes);
+    
+    
+    switch (size) {
+	case "small": grammar = smallGrammar; break;
+	case "medium": grammar = mediumGrammar; break;
+	case "large": grammar = largeGrammar; break;
+    }
+
 	// generate JSON data randomly
 	users[1] = Mock.mock(grammar);
 	users[0] = JSON.parse(JSON.stringify(users[1]));
@@ -83,30 +103,34 @@ exports.findUser = function(req, res){
     for(var i=0; i<loopTimes; i++) {
         generator();
     }
-	users[2] = algorithm;
 	
 	res.send(users);
 }
 
 exports.updateUser = function(req, res){
+	console.log("----------------------------");
+	
 	var receiveTime = Date.now();
     
     var diffStartTime = req.body.diffStartTime;
     var diffEndTime = req.body.diffEndTime;
     var sendTime = req.body.sendTime;   
 	var delta = req.body.delta;
-  	var patchStartTime = 0;          
-    var patchEndTime = 0;
+  	var patchStartTime ;          
+    var patchEndTime ;
+ 
+    patchStartTime = Date.now();
 
     switch (algorithm) {
     	case "0":
     		break;
     	case "1":
-	    	patchStartTime = Date.now();
 	    	jsondiffpatch.patch(users[0], delta);
-	    	patchEndTime = Date.now();
     		break;
     }
+
+	patchEndTime = Date.now();
+    
 
 
     var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);

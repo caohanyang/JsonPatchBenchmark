@@ -29,8 +29,33 @@
   <script type="text/javascript" src="app.js"></script>
 </head>
 
-<body ng-app="userApp" ng-controller="userController">
+<body align="center" ng-app="userApp" ng-controller="userController">
+
+<form class="form-inline" >
+
+<table class="table" align="center">
+      <tr >
+        <td><b>Algorithm:</b></td><td><input ng-model="algorithm" type="text" class="input-small"/></td>
+      </tr>
+      <tr >
+        <td><b>Size:</b></td><td><input ng-model="size" type="text" class="input-small"/></td>
+      </tr>
+      <tr >
+        <td><b>Probability:</b></td><td><input ng-model="probability" type="text" class="input-small"/></td>
+      </tr>
+      <tr >
+        <td><b>LoopTimes:</b></td><td><input ng-model="loopTimes" type="text" class="input-small"/></td>
+      </tr>
+</table>
+
+<br>
+
+<button ng-click="sendPara()" id="gobutton" class="btn">Go!</button>
+
 <h2>{{mark}}</h2>
+
+</form>
+
 
 </body>
 

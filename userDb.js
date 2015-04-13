@@ -10,7 +10,7 @@ var smallGrammar = {
          "married|1" : true,
          "name" : "@FIRST @LAST",
 	 "sons" : null,
-	 "daughters|0-3" : [ 
+	 "daughters|3-3" : [ 
 	     { 
 		  "age|0-31" : 0,
 		  "name" : "@FIRST"
@@ -27,7 +27,7 @@ var mediumGrammar = {
          "married|1" : true,
          "name" : "@FIRST @LAST",
 	 "sons" : null,
-	 "daughters|0-3" : [ 
+	 "daughters|3-3" : [ 
 	     { 
 		  "age|0-31" : 0,
 		  "name" : "@FIRST"
@@ -44,7 +44,7 @@ var largeGrammar = {
          "married|1" : true,
          "name" : "@FIRST @LAST",
 	 "sons" : null,
-	 "daughters|0-3" : [ 
+	 "daughters|3-3" : [ 
 	     { 
 		  "age|0-31" : 0,
 		  "name" : "@FIRST"
@@ -59,6 +59,7 @@ var largeGrammar = {
 var size = process.argv.slice(2)[0];
 var probability = process.argv.slice(3)[0];
 var loopTimes = process.argv.slice(4)[0];
+var algorithm = process.argv.slice(5)[0];
 
 switch (size) {
 	case "small": grammar = smallGrammar; break;
@@ -71,7 +72,6 @@ exports.findUser = function(req, res){
 	// generate JSON data randomly
 	users[1] = Mock.mock(grammar);
 	users[0] = JSON.parse(JSON.stringify(users[1]));
-    // console.log(users[1]);
 	fuzzer.seed(2);
     
     //set the probability to change the node
@@ -83,7 +83,7 @@ exports.findUser = function(req, res){
     for(var i=0; i<loopTimes; i++) {
         generator();
     }
-	
+	users[2] = algorithm;
 	
 	res.send(users);
 }
@@ -95,20 +95,25 @@ exports.updateUser = function(req, res){
     var diffEndTime = req.body.diffEndTime;
     var sendTime = req.body.sendTime;   
 	var delta = req.body.delta;
-  
-	var patchStartTime = Date.now();          
-    jsondiffpatch.patch(users[0], delta);
-    var patchEndTime = Date.now();
+  	var patchStartTime = 0;          
+    var patchEndTime = 0;
 
-    console.log("Call to diff took " + (diffEndTime - diffStartTime) + " milliseconds.");
-    console.log("Call to send took " + (receiveTime - sendTime) + " milliseconds.");
-    console.log("Call to patch took " + (patchEndTime - patchStartTime) + " milliseconds.");
+    switch (algorithm) {
+    	case "0":
+    		break;
+    	case "1":
+	    	patchStartTime = Date.now();
+	    	jsondiffpatch.patch(users[0], delta);
+	    	patchEndTime = Date.now();
+    		break;
+    }
+
 
     var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);
 
     var result = (diffEndTime - diffStartTime)+',' +(receiveTime - sendTime) +',' +(patchEndTime - patchStartTime)+ ','+totalTime+'\n';
 
-    fs.writeFile(size+'-P'+probability+'-L'+loopTimes+'.csv', result, {flag: 'a'}, function(err){
+    fs.writeFile('./result/'+size+'-P'+probability+'-L'+loopTimes+'-A'+algorithm+'.csv', result, {flag: 'a'}, function(err){
         if(err) throw err;
         console.log("success");
     });

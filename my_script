@@ -17,10 +17,10 @@ while getopts ":t:p:l:" opt; do
       probability=$OPTARG
       echo "-p was triggered, Parameter: $OPTARG" >&2
       ;;
-	l)
+  	l)
       loop=$OPTARG
-	  echo "-l was triggered, Parameter: $OPTARG" >&2
-	  ;;
+  	  echo "-l was triggered, Parameter: $OPTARG" >&2
+	    ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       exit 1
@@ -32,21 +32,21 @@ while getopts ":t:p:l:" opt; do
   esac
 done
 
- #start the webdriver
+#start the webdriver
 webdriver-manager start &
 
-#start to benchmark times: $times
-for size in small medium large
+for algorithm in 0 1
 do
-  #start the server $i:index, $probability:chance to modify the node,  $loop:traverse times
-	#nodemon server.js $size $probability $loop >"$size.txt" 2>&1 &
-  node server.js $size $probability $loop &
+  for size in small medium large
+  do
+    #start the server $i:index, $probability:chance to modify the node,  $loop:traverse times
+  	#nodemon server.js $size $probability $loop >"$size.txt" 2>&1 &
+    node server.js $size $probability $loop $algorithm &
     #start to test 
-	for (( t=1; t<=$times; t++ ))
-	do
-	   protractor conf.js
-	done
-
-  killall node
-
+  	for (( t=1; t<=$times; t++ ))
+  	do
+  	   protractor conf.js
+  	done
+    killall node
+  done 
 done

@@ -30,6 +30,7 @@ angular.module('userCtrl', [])
               break;
             case "1":
               var delta = jsondiffpatch.diff($scope.users[0], $scope.users[1]);
+              //if(delta == undefined) delta = $scope.users[1];
               break;  
           }
           var diffEndTime = Date.now();
@@ -43,11 +44,9 @@ angular.module('userCtrl', [])
             "sendTime": sendTime,
             "delta": delta
           };
-            console.log($scope.users[0]);
-            console.log($scope.users[1]);
-            console.log("patch="+JSON.stringify(delta).length);
-            console.log("new data="+JSON.stringify($scope.users[1]).length);
-
+          
+          //console.log("patch="+JSON.stringify(delta).length);
+          //console.log("new data="+JSON.stringify($scope.users[1]).length);
 
           User.update(transmit, function() {
             $scope.mark = 'ok';

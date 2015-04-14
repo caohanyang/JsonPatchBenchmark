@@ -10,9 +10,9 @@ describe('Protractor Demo App', function() {
     browser.get('http://localhost:8080');
   });
   
-  var algorithmArr = [0, 1];
+  var algorithmArr = [1, 0];
   var sizeArr = ["small", "medium", "large"];
-  var probabilityArr = [0.1, 0.5, 0.7];
+  var probabilityArr = [0.01, 0.1, 0.5];
   var loopTimesArr = [1, 2];
 
 it("do the test", function() {

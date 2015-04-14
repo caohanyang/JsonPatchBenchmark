@@ -55,19 +55,6 @@ var largeGrammar = {
     'string|1-10': '*'
 };
 
-//get the parameters 
-// var size = process.argv.slice(2)[0];
-// var probability = process.argv.slice(3)[0];
-// var loopTimes = process.argv.slice(4)[0];
-// var algorithm = process.argv.slice(5)[0];
-
-// switch (size) {
-// 	case "small": grammar = smallGrammar; break;
-// 	case "medium": grammar = mediumGrammar; break;
-// 	case "large": grammar = largeGrammar; break;
-// }
-
-
 exports.findUser = function(req, res){
 	console.log("==========================");
 	console.log(req.query);
@@ -131,8 +118,6 @@ exports.updateUser = function(req, res){
 
 	patchEndTime = Date.now();
     
-
-
     var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);
 
     var result = (diffEndTime - diffStartTime)+',' +(receiveTime - sendTime) +',' +(patchEndTime - patchStartTime)+ ','+totalTime+'\n';

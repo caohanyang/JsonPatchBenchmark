@@ -24,5 +24,4 @@ app.get('*', function(req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-app.listen(8080);
-console.log('listen on 8080');
+app.listen(process.env.port || 5000);

@@ -7,12 +7,14 @@ describe('Protractor Demo App', function() {
   var latestResult = element(by.binding('mark'));
 
   beforeEach(function() {
-    browser.get('http://localhost:8080');
+    //browser.get('http://jsonbenchmark-218523.euw1-2.nitrousbox.com:8080');
+    browser.get('http://ghostblog-213388.euw1-2.nitrousbox.com:8080');
+    
   });
   
   var algorithmArr = [1, 0];
   var sizeArr = ["small", "medium", "large"];
-  var probabilityArr = [0.01, 0.1, 0.5];
+  var probabilityArr = [0.01, 0.05, 0.1];
   var loopTimesArr = [1, 2];
 
 it("do the test", function() {

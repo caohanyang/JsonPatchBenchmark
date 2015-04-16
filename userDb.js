@@ -3,7 +3,10 @@ var jsondiffpatch = require('jsondiffpatch'),
 	Mock = require('mockjs'),
 	fs = require('fs'),
 	users = [];
-var grammar, size, probability, loopTimes, algorithm;
+var test = require('unit.js');
+var assert = test.assert;
+var grammar, size, probability, algorithm;
+
 var smallGrammar = {
     'father|1-1': [{
 	 'id|+1': 1,
@@ -61,13 +64,11 @@ exports.findUser = function(req, res){
 
     size = req.query.size;
     probability = req.query.probability;
-    loopTimes = req.query.loopTimes;
     algorithm = req.query.algorithm;
    
     console.log(req.query.algorithm);
     console.log(req.query.size);
     console.log(req.query.probability);
-    console.log(req.query.loopTimes);
     
     
     switch (size) {
@@ -87,9 +88,8 @@ exports.findUser = function(req, res){
 	// mutate JSON Object
 	var generator = fuzzer.mutate.object(users[1]);
     
-    for(var i=0; i<loopTimes; i++) {
-        generator();
-    }
+    // tranverse it 
+    generator();
 	
 	res.send(users);
 }
@@ -110,6 +110,7 @@ exports.updateUser = function(req, res){
 
     switch (algorithm) {
     	case "0":
+    	    users[0] = delta;
     		break;
     	case "1":
 	    	jsondiffpatch.patch(users[0], delta);
@@ -118,16 +119,35 @@ exports.updateUser = function(req, res){
 
 	patchEndTime = Date.now();
     
+    //assert the data is the same
+    var flag = false;
+    var err = test.error(function() {
+        //assert the data
+   	    assert.equal(JSON.stringify(users[0]), JSON.stringify(users[1]));
+   	    //set the flag
+        flag = true;
+   	    throw new Error('OK!');
+    });
+    if(flag) {
+    	//the two data is the same
+        writeCSV();
+        res.send("ok");
+    } else {
+    	//the two data is not the same
+        res.send("ko");
+    }
+
+function writeCSV () {
     var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);
 
     var result = (diffEndTime - diffStartTime)+',' +(receiveTime - sendTime) +',' +(patchEndTime - patchStartTime)+ ','+totalTime+'\n';
 
-    fs.writeFile('./result/'+size+'-P'+probability+'-L'+loopTimes+'-A'+algorithm+'.csv', result, {flag: 'a'}, function(err){
+    fs.writeFile('./result/'+size+'-P'+probability+'-A'+algorithm+'.csv', result, {flag: 'a'}, function(err){
         if(err) throw err;
         console.log("success");
     });
-
-    res.end();
+	
+}
 
 }
 

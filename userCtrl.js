@@ -8,7 +8,7 @@ angular.module('userCtrl', [])
         "loopTimes": $scope.loopTimes,
         "algorithm": $scope.algorithm
       };
-      
+
       var clear = function(){
         $scope.size=null;
         $scope.probability=null;
@@ -32,6 +32,10 @@ angular.module('userCtrl', [])
               break;  
             case "2":
               var delta = jsonpatch.compare($scope.users[0], $scope.users[1]);
+              break;
+            case "3":
+              var jiff = require('jiff');
+              var delta = jiff.diff($scope.users[0], $scope.users[1]);
               break;
           }
 

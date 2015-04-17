@@ -1,5 +1,6 @@
 var jsondiffpatch = require('jsondiffpatch'),
     jsonpatch = require('fast-json-patch'),
+    jiff = require('jiff'),
 	fuzzer = require('fuzzer'),
 	Mock = require('mockjs'),
 	fs = require('fs'),
@@ -124,6 +125,10 @@ exports.updateUser = function(req, res){
     		break;
         case "2":
             jsonpatch.apply(users[0], delta);
+            break;
+        case "3":
+            users[0] = jiff.patch(delta, users[0]);
+            break;
     }
 
 	patchEndTime = Date.now();
@@ -139,9 +144,7 @@ exports.updateUser = function(req, res){
         flag = true;
    	    throw new Error('OK!');
     });
-    // if (JSON.stringify(users[0]) === JSON.stringify(users[1])){
-    //     flag = true;
-    // }
+    
     if(flag) {
     	//the two data is the same
         writeCSV();

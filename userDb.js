@@ -1,4 +1,5 @@
 var jsondiffpatch = require('jsondiffpatch'),
+    jsonpatch = require('fast-json-patch'),
 	fuzzer = require('fuzzer'),
 	Mock = require('mockjs'),
 	fs = require('fs'),
@@ -94,58 +95,6 @@ exports.findUser = function(req, res){
     
     // tranverse it 
     generator();
-
-    // users[0] = {
-    //     "father": [
-    //     {
-    //         "id": 1,
-    //         "married": true,
-    //         "name": "George Williams",
-    //         "sons": null,
-    //         "daughters": [
-    //         {
-    //             "age": 3,
-    //             "name": "Richard"
-    //         },
-    //         {
-    //             "age": 28,
-    //             "name": "Steven"
-    //         },
-    //         {
-    //             "age": 8,
-    //             "name": "Susan"
-    //         }
-    //         ]
-    //     }
-    //     ],
-    //     "string": "*"
-    // };
-
-    // users[1] = {
-    //     "father": [
-    //     {
-    //         "id": 2,
-    //         "married": true,
-    //         "name": "George Williams",
-    //         "sons": null,
-    //         "daughters": [
-    //         {
-    //             "age": 3,
-    //             "name": "Richard"
-    //         },
-    //         {
-    //             "age": 28,
-    //             "name": "Steven"
-    //         },
-    //         {
-    //             "age": 8,
-    //             "name": "Susan"
-    //         }
-    //         ]
-    //     }
-    //     ],
-    //     "string": "*"
-    // };
 	
 	res.send(users);
 }
@@ -173,6 +122,8 @@ exports.updateUser = function(req, res){
     	case "1":
 	    	jsondiffpatch.patch(users[0], delta);
     		break;
+        case "2":
+            jsonpatch.apply(users[0], delta);
     }
 
 	patchEndTime = Date.now();

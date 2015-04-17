@@ -29,15 +29,19 @@ angular.module('userCtrl', [])
               break;
             case "1":
               var delta = jsondiffpatch.diff($scope.users[0], $scope.users[1]);
-              if (delta == undefined){
-                rate = 0;
-              } else {
-                rate = (JSON.stringify(delta).length)/(JSON.stringify($scope.users[0]).length);
-              }
               break;  
+            case "2":
+              var delta = jsonpatch.compare($scope.users[0], $scope.users[1]);
+              break;
           }
 
           var diffEndTime = Date.now();
+
+          if (delta == undefined){
+            rate = 0;
+          } else {
+            rate = (JSON.stringify(delta).length)/(JSON.stringify($scope.users[0]).length);
+          }
 
 
           console.log("rate="+rate);
@@ -63,7 +67,6 @@ angular.module('userCtrl', [])
           console.log("new data="+JSON.stringify($scope.users[1]).length);
           console.log($scope.users[0]);
           console.log($scope.users[1]);
-          console.log(JSON.stringify(delta));
 
           User.update(transmit, function(res) {
             console.log(res);

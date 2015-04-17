@@ -24,6 +24,7 @@ var smallGrammar = {
     'string|1-10': '*'
 };
 
+
 var mediumGrammar = {
     'father|20-20': [{
 	 'id|+1': 1,
@@ -80,7 +81,10 @@ exports.findUser = function(req, res){
 	// generate JSON data randomly
 	users[1] = Mock.mock(grammar);
 	users[0] = JSON.parse(JSON.stringify(users[1]));
-	fuzzer.seed(2);
+
+    // var num = Math.floor((Math.random() * 100) + 1);
+
+	fuzzer.seed(41);
     
     //set the probability to change the node
 	fuzzer.changeChance(probability);
@@ -90,6 +94,58 @@ exports.findUser = function(req, res){
     
     // tranverse it 
     generator();
+
+    // users[0] = {
+    //     "father": [
+    //     {
+    //         "id": 1,
+    //         "married": true,
+    //         "name": "George Williams",
+    //         "sons": null,
+    //         "daughters": [
+    //         {
+    //             "age": 3,
+    //             "name": "Richard"
+    //         },
+    //         {
+    //             "age": 28,
+    //             "name": "Steven"
+    //         },
+    //         {
+    //             "age": 8,
+    //             "name": "Susan"
+    //         }
+    //         ]
+    //     }
+    //     ],
+    //     "string": "*"
+    // };
+
+    // users[1] = {
+    //     "father": [
+    //     {
+    //         "id": 2,
+    //         "married": true,
+    //         "name": "George Williams",
+    //         "sons": null,
+    //         "daughters": [
+    //         {
+    //             "age": 3,
+    //             "name": "Richard"
+    //         },
+    //         {
+    //             "age": 28,
+    //             "name": "Steven"
+    //         },
+    //         {
+    //             "age": 8,
+    //             "name": "Susan"
+    //         }
+    //         ]
+    //     }
+    //     ],
+    //     "string": "*"
+    // };
 	
 	res.send(users);
 }
@@ -102,7 +158,9 @@ exports.updateUser = function(req, res){
     var diffStartTime = req.body.diffStartTime;
     var diffEndTime = req.body.diffEndTime;
     var sendTime = req.body.sendTime;   
-	var delta = req.body.delta;
+    var delta = req.body.delta;
+	var rate = req.body.rate;
+    console.log(rate);
   	var patchStartTime ;          
     var patchEndTime ;
  
@@ -121,6 +179,8 @@ exports.updateUser = function(req, res){
     
     //assert the data is the same
     var flag = false;
+    console.log(JSON.stringify(users[0]).length);
+    console.log(JSON.stringify(users[1]).length);
     var err = test.error(function() {
         //assert the data
    	    assert.equal(JSON.stringify(users[0]), JSON.stringify(users[1]));
@@ -128,6 +188,9 @@ exports.updateUser = function(req, res){
         flag = true;
    	    throw new Error('OK!');
     });
+    // if (JSON.stringify(users[0]) === JSON.stringify(users[1])){
+    //     flag = true;
+    // }
     if(flag) {
     	//the two data is the same
         writeCSV();
@@ -137,17 +200,18 @@ exports.updateUser = function(req, res){
         res.send("ko");
     }
 
-function writeCSV () {
-    var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);
+    function writeCSV () {
 
-    var result = (diffEndTime - diffStartTime)+',' +(receiveTime - sendTime) +',' +(patchEndTime - patchStartTime)+ ','+totalTime+'\n';
+        var totalTime = (diffEndTime - diffStartTime) + (receiveTime - sendTime) + (patchEndTime - patchStartTime);
 
-    fs.writeFile('./result/'+size+'-P'+probability+'-A'+algorithm+'.csv', result, {flag: 'a'}, function(err){
-        if(err) throw err;
-        console.log("success");
-    });
-	
-}
+        var result = (diffEndTime - diffStartTime)+',' +(receiveTime - sendTime) +',' +(patchEndTime - patchStartTime)+ ','+totalTime+','+rate+ '\n';
+
+        fs.writeFile('./result/'+size+'-P'+probability+'-A'+algorithm+'.csv', result, {flag: 'a'}, function(err){
+            if(err) throw err;
+            console.log("success");
+        });
+
+    }
 
 }
 

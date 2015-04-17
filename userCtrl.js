@@ -3,10 +3,10 @@ angular.module('userCtrl', [])
    $scope.sendPara = function(){
       
       var parameter = {
-      "size": $scope.size,
-      "probability": $scope.probability,
-      "loopTimes": $scope.loopTimes,
-      "algorithm": $scope.algorithm
+        "size": $scope.size,
+        "probability": $scope.probability,
+        "loopTimes": $scope.loopTimes,
+        "algorithm": $scope.algorithm
       };
       
       var clear = function(){
@@ -19,10 +19,9 @@ angular.module('userCtrl', [])
       //clear the mark
       $scope.mark=null;
 
-      $scope.users = User.query(parameter, function() {
-          
-          
+      var rate;
 
+      $scope.users = User.query(parameter, function() {
           var diffStartTime = Date.now();
           switch ($scope.algorithm) {
             case "0":
@@ -30,18 +29,27 @@ angular.module('userCtrl', [])
               break;
             case "1":
               var delta = jsondiffpatch.diff($scope.users[0], $scope.users[1]);
+              if (delta == undefined){
+                rate = 0;
+              } else {
+                rate = (JSON.stringify(delta).length)/(JSON.stringify($scope.users[0]).length);
+              }
               break;  
           }
+
           var diffEndTime = Date.now();
 
-          //todosomething
+
+          console.log("rate="+rate);
+
           var sendTime = Date.now();
 
           var transmit = {
             "diffStartTime": diffStartTime,
             "diffEndTime": diffEndTime,
             "sendTime": sendTime,
-            "delta": delta
+            "delta": delta,
+            "rate": rate
           };
           
           if(delta == undefined) {
@@ -50,13 +58,17 @@ angular.module('userCtrl', [])
           } else {
             console.log("patch="+JSON.stringify(delta).length); 
           }
-          console.log("old data="+JSON.stringify($scope.users[1]).length);
+
+          console.log("old data="+JSON.stringify($scope.users[0]).length);
           console.log("new data="+JSON.stringify($scope.users[1]).length);
+          console.log($scope.users[0]);
+          console.log($scope.users[1]);
+          console.log(JSON.stringify(delta));
 
           User.update(transmit, function(res) {
             console.log(res);
             $scope.mark = res[0]+res[1];
-            //clear the data
+            // clear the data
             clear();
           });
 

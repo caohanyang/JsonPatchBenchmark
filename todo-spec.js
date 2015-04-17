@@ -1,8 +1,8 @@
 describe('Protractor Demo App', function() {
   var size = element(by.model('size'));
   var probability = element(by.model('probability'));
-  var loopTimes = element(by.model('loopTimes'));
   var algorithm = element(by.model('algorithm'));
+  var seed = element(by.model('seed'));
   var goButton = element(by.id('gobutton'));
   var latestResult = element(by.binding('mark'));
 
@@ -11,16 +11,17 @@ describe('Protractor Demo App', function() {
     
   });
   
-  var algorithmArr = [0];
+  var algorithmArr = [0, 1];
   var sizeArr = ["small", "medium", "large"];
-  var probabilityArr = [0.01, 0.05, 0.1];
-  //var loopTimesArr = [1, 2];
+  // var sizeArr = ["large"];
+  var probabilityArr = [[0.08, 0.2, 0.5], [0.05, 0.2, 0.4], [0.05, 0.2, 0.39]];
+  var num;
 
 it("do the test", function() {
    for(var a=0; a<algorithmArr.length; a++) {
      for(var s=0; s<sizeArr.length; s++) {
-         for(var p=0; p<probabilityArr.length; p++) {
-               add(algorithmArr[a], sizeArr[s], probabilityArr[p]);
+         for(var p=0; p<probabilityArr[s].length; p++) {
+               add(algorithmArr[a], sizeArr[s], probabilityArr[s][p]); 
         }
      }
   }         

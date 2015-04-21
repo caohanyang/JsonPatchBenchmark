@@ -8,7 +8,7 @@ describe('Protractor Demo App', function() {
 
   beforeEach(function() {
     browser.get('http://localhost:8080');
-    
+    //browser.get('http://ghostblog-213388.euw1-2.nitrousbox.com:8080/');
   });
   
   var algorithmArr = [0, 1, 2, 3];
@@ -17,9 +17,9 @@ describe('Protractor Demo App', function() {
   var num;
 
 it("do the test", function() {
-   for(var a=0; a<algorithmArr.length; a++) {
-     for(var s=0; s<sizeArr.length; s++) {
-         for(var p=0; p<probabilityArr[s].length; p++) {
+   for(var s=0; s<sizeArr.length; s++) {
+       for(var p=0; p<probabilityArr[s].length; p++) {
+         for(var a=0; a<algorithmArr.length; a++) {
                add(algorithmArr[a], sizeArr[s], probabilityArr[s][p]); 
         }
      }

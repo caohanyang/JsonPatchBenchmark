@@ -8,6 +8,7 @@ var jsondiffpatch = require('jsondiffpatch'),
 var test = require('unit.js');
 var assert = test.assert;
 var grammar, size, probability, algorithm;
+var comparedData;  
 
 var smallGrammar = {
     'father|1-1': [{
@@ -64,39 +65,43 @@ var largeGrammar = {
 exports.findUser = function(req, res){
 	console.log("==========================");
 	console.log(req.query);
-
-    size = req.query.size;
-    probability = req.query.probability;
     algorithm = req.query.algorithm;
-   
-    console.log(req.query.algorithm);
-    console.log(req.query.size);
-    console.log(req.query.probability);
+
+    if(size != req.query.size || probability != req.query.probability) {
+        
+        size = req.query.size;
+        probability = req.query.probability;
+
+        console.log(req.query.algorithm);
+        console.log(req.query.size);
+        console.log(req.query.probability);
     
     
-    switch (size) {
-	case "small": grammar = smallGrammar; break;
-	case "medium": grammar = mediumGrammar; break;
-	case "large": grammar = largeGrammar; break;
-    }
+        switch (size) {
+        case "small": grammar = smallGrammar; break;
+        case "medium": grammar = mediumGrammar; break;
+        case "large": grammar = largeGrammar; break;
+        }
 
-	// generate JSON data randomly
-	users[1] = Mock.mock(grammar);
-	users[0] = JSON.parse(JSON.stringify(users[1]));
+        users[1] = Mock.mock(grammar);                   //1:modified data
+        users[0] = JSON.parse(JSON.stringify(users[1])); //0:origin data
 
-    // var num = Math.floor((Math.random() * 100) + 1);
+        fuzzer.seed(41);
+        
+        //set the probability to change the node
+        fuzzer.changeChance(probability);
 
-	fuzzer.seed(41);
+        // mutate JSON Object
+        var generator = fuzzer.mutate.object(users[1]);
+        
+        // tranverse it 
+        generator();  
+    } 
     
-    //set the probability to change the node
-	fuzzer.changeChance(probability);
+    //use the comparedData to copy the origin data
+    comparedData = JSON.parse(JSON.stringify(users[0]));
 
-	// mutate JSON Object
-	var generator = fuzzer.mutate.object(users[1]);
-    
-    // tranverse it 
-    generator();
-	
+    console.log(JSON.stringify(users[1]).length);
 	res.send(users);
 }
 
@@ -118,16 +123,16 @@ exports.updateUser = function(req, res){
 
     switch (algorithm) {
     	case "0":
-    	    users[0] = delta;
+    	    comparedData = delta;
     		break;
     	case "1":
-	    	jsondiffpatch.patch(users[0], delta);
+	    	jsondiffpatch.patch(comparedData, delta);
     		break;
         case "2":
-            jsonpatch.apply(users[0], delta);
+            jsonpatch.apply(comparedData, delta);
             break;
         case "3":
-            users[0] = jiff.patch(delta, users[0]);
+            comparedData = jiff.patch(delta, comparedData);
             break;
     }
 
@@ -135,11 +140,11 @@ exports.updateUser = function(req, res){
     
     //assert the data is the same
     var flag = false;
-    console.log(JSON.stringify(users[0]).length);
     console.log(JSON.stringify(users[1]).length);
+    console.log(JSON.stringify(comparedData).length);
     var err = test.error(function() {
         //assert the data
-   	    assert.equal(JSON.stringify(users[0]), JSON.stringify(users[1]));
+   	    assert.equal(JSON.stringify(comparedData), JSON.stringify(users[1]));
    	    //set the flag
         flag = true;
    	    throw new Error('OK!');

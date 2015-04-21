@@ -34,14 +34,20 @@ angular.module('userCtrl', [])
               var delta = jsonpatch.compare($scope.users[0], $scope.users[1]);
               break;
             case "3":
-              var jiff = require('jiff');
-              var delta = jiff.diff($scope.users[0], $scope.users[1]);
+              if($scope.size == "large") {
+                //this algorithem isn't work when the data is large
+                $scope.mark = 'ko';
+              } else {
+                var jiff = require('jiff');
+                var delta = jiff.diff($scope.users[0], $scope.users[1]);
+              }
               break;
           }
-
           var diffEndTime = Date.now();
 
-          if (delta == undefined){
+          console.log(typeof delta);
+
+          if (delta == undefined || $scope.algorithm=="0"){
             rate = 0;
           } else {
             rate = (JSON.stringify(delta).length)/(JSON.stringify($scope.users[0]).length);

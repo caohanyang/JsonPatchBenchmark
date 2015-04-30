@@ -42,6 +42,11 @@ angular.module('userCtrl', [])
                 var delta = jiff.diff($scope.users[0], $scope.users[1]);
               }
               break;
+            case "4":
+              //Usage: input in console:  browserify index.js -r changeset >changeset.js
+              var changeset = require('changeset');
+              var delta = changeset($scope.users[0], $scope.users[1]);
+              break;
           }
           var diffEndTime = Date.now();
 

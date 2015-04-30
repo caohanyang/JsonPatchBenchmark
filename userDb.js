@@ -4,6 +4,8 @@ var jsondiffpatch = require('jsondiffpatch'),
 	fuzzer = require('fuzzer'),
 	Mock = require('mockjs'),
 	fs = require('fs'),
+    changeSet = require('changeset'),
+    diffjson = require('diff-json');
 	users = [];
 var test = require('unit.js');
 var assert = test.assert;
@@ -133,6 +135,12 @@ exports.updateUser = function(req, res){
             break;
         case "3":
             comparedData = jiff.patch(delta, comparedData);
+            break;
+        case "4":
+            comparedData = changeSet.apply(delta, comparedData);
+            break;
+        case "5":
+            comparedData = diffjson.applyChanges(comparedData, delta);
             break;
     }
 
